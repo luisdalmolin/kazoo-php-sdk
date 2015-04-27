@@ -78,7 +78,7 @@ class User implements AuthTokenInterface {
 
     public function __destruct() {
         if (!is_null($this->auth_response)) {
-            $_SESSION['Kazoo']['AuthToken']['User'] = $this->auth_response;
+            $_SESSION['Kazoo']['AuthToken']['User'][$this->username] = $this->auth_response;
         }
     }
 
@@ -134,8 +134,8 @@ class User implements AuthTokenInterface {
 
     public function reset() {
         $this->auth_response = null;
-        if (!empty($_SESSION['Kazoo']['AuthToken']['User'])) {
-            unset($_SESSION['Kazoo']['AuthToken']['User']);
+        if (!empty($_SESSION['Kazoo']['AuthToken']['User'][$this->username])) {
+            unset($_SESSION['Kazoo']['AuthToken']['User'][$this->username]);
         }
     }
 
@@ -152,8 +152,8 @@ class User implements AuthTokenInterface {
     }
 
     private function checkSessionResponse() {
-        if (!empty($_SESSION['Kazoo']['AuthToken']['User'])) {
-            $this->auth_response = $_SESSION['Kazoo']['AuthToken']['User'];
+        if (!empty($_SESSION['Kazoo']['AuthToken']['User'][$this->username])) {
+            $this->auth_response = $_SESSION['Kazoo']['AuthToken']['User'][$this->username];
         } else {
             $this->requestToken();
         }
@@ -173,7 +173,7 @@ class User implements AuthTokenInterface {
         switch ($response->status) {
         case "success":
             $this->auth_response = $response->data;
-            $_SESSION['Kazoo']['AuthToken']['User'] = $this->auth_response;
+            $_SESSION['Kazoo']['AuthToken']['User'][$this->username] = $this->auth_response;
             $this->auth_response->auth_token = $response->auth_token;
             break;
         default:
