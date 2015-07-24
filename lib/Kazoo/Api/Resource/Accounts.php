@@ -46,6 +46,7 @@ class Accounts extends AbstractResource {
         $this->_child_resources[] = array("name" => "voicemail_boxes", "uri" => "/vmboxes", "resource_class" => "VoicemailBoxes");
         $this->_child_resources[] = array("name" => "webhooks", "uri" => "/webhooks", "resource_class" => "Webhooks");
         $this->_child_resources[] = array("name" => "phone_numbers", "uri" => "/phone_numbers", "resource_class" => "PhoneNumbers");
+        $this->_child_resources[] = array("name" => "blacklists", "uri" => "/blacklists", "resource_class" => "Blacklists");
     }
 
     public function __call($name, $arguments) {
