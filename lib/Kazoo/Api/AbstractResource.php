@@ -146,14 +146,18 @@ abstract class AbstractResource {
     }
 
     private function process_response($response) {
-        $results = $response->data;
-        if (is_object($results)
-          && property_exists($results, "numbers")) {
-            $results = $results->numbers;
-            foreach($results as $key => $value) {
-                $results->$key->id = urlencode($key);
+        if (is_object($response)) {
+            $results = $response->data;
+            if (is_object($results)
+              && property_exists($results, "numbers")) {
+                $results = $results->numbers;
+                foreach($results as $key => $value) {
+                    $results->$key->id = urlencode($key);
+                }
             }
+            return $results;
         }
-        return $results;
+        
+        return (object) [];
     }
 }
