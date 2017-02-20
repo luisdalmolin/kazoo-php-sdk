@@ -49,6 +49,7 @@ class Accounts extends AbstractResource {
         $this->_child_resources[] = array("name" => "blacklists", "uri" => "/blacklists", "resource_class" => "Blacklists");
         $this->_child_resources[] = array("name" => "fax_boxes", "uri" => "/faxboxes", "resource_class" => "FaxBoxes");
         $this->_child_resources[] = array("name" => "lists", "uri" => "/lists", "resource_class" => "Lists");
+        $this->_child_resources[] = array("name" => "qubicle_queues", "uri" => "/qubicle_queues", "resource_class" => "QubicleQueues");
     }
 
     public function __call($name, $arguments) {

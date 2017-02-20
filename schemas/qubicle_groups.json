@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema#",
+    "_id": "qubicle_group",
+    "description": "Defines the fields required to configure a Qubicle group",
+    "name": "Qubicle Group",
+    "properties": {
+        "name": {
+            "description": "A friendly name for the group",
+            "name": "Name",
+            "type": "string",
+            "required": "true"
+        },
+        "members":{
+            "description": "The list of recipient id's that are a member of this group",
+            "name": "Members",
+            "type": "list",
+            "required": "true"
+        }
+    },
+    "required": true,
+    "type": "object"
+}

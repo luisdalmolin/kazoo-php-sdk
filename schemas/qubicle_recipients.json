@@ -1,0 +1,36 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema#",
+    "_id": "qubicle_recipient",
+    "description": "Defines the fields required to be configured on the users document for a user to be used as a Qubicle recipient.",
+    "name": "Qubicle Recipient",
+    "properties": {
+        "qubicle": {
+            "description": "The configuration values for the Qubicle recipient",
+            "name": "Qubicle",
+            "properties": {
+                "enabled": {
+                    "description": "Boolean to determine if the user is enabled for Qubicle",
+                    "name": "Enabled",
+                    "type": "boolean",
+                    "required": "true"
+                },
+                "pincode":{
+                    "description": "The 4 digit pincode that can be used to perform actions for this recipient via Callflows",
+                    "name": "Qubicle Pincode",
+                    "type": "string",
+                    "required": "false"
+                },
+                "presence_id":{
+                    "description": "A unique ID that will be used for presence updates when the status changes for the recipient",
+                    "name": "Qubicle Presence Id",
+                    "type": "string",
+                    "required": "false"
+                }
+            },
+            "required": true,
+            "type": "object"
+        }
+    },
+    "required": true,
+    "type": "object"
+}
