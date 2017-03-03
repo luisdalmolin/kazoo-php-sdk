@@ -12,4 +12,9 @@ class QubicleQueue extends AbstractEntity
     public function initDefaultValues() {
         
     }
+
+    public function getCallflowDefaultData() {
+        $this->_default_callflow_data->id = $this->id;
+        return $this->_default_callflow_data;
+    }
 }
