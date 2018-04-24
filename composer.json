@@ -19,7 +19,7 @@
         "php": ">=5.3.2",
         "ext-curl": "*",
         "guzzle/guzzle": "v3.8.1",
-        "monolog/monolog": "1.7.0"
+        "monolog/monolog": "1.*"
     },
     "minimum-stability": "stable",
     "preferred-install": "dist",
