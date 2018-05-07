@@ -2,8 +2,6 @@
 
 namespace Kazoo\AuthToken;
 
-require_once dirname(__FILE__) . "/../../../vendor/autoload.php";
-
 use stdClass;
 use Guzzle\Common\Event;
 use Kazoo\Exception\AuthenticationException;
