@@ -18,8 +18,8 @@
     "require": {
         "php": ">=5.3.2",
         "ext-curl": "*",
-        "guzzle/guzzle": "v3.8.1",
-        "monolog/monolog": "1.*"
+        "guzzle/guzzle": "^3.9",
+        "monolog/monolog": "~1.12"
     },
     "minimum-stability": "stable",
     "preferred-install": "dist",
@@ -27,6 +27,6 @@
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
-        "psr-0": {"Kazoo": "lib/"}
+        "psr-0": {"Kazoo": "src/"}
     }
 }
