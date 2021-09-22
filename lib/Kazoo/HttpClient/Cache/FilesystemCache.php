@@ -2,7 +2,7 @@
 
 namespace Kazoo\HttpClient\Cache;
 
-use Guzzle\Http\Message\Response;
+use GuzzleHttp\Psr7\Response;
 
 class FilesystemCache implements CacheInterface
 {

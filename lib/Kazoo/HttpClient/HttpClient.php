@@ -2,10 +2,10 @@
 
 namespace Kazoo\HttpClient;
 
-use Guzzle\Http\Client as GuzzleClient;
-use Guzzle\Http\ClientInterface;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 use Guzzle\Log\MonologLogAdapter;
 use Monolog\Logger;
@@ -39,7 +39,8 @@ class HttpClient implements HttpClientInterface {
      * @param array           $options
      * @param ClientInterface $client
      */
-    public function __construct(array $options = array(), ClientInterface $client = null) {
+    public function __construct(array $options = array(), ClientInterface $client = null)
+    {
         $this->options = array_merge($this->options, $options);
         $client = $client ? : new GuzzleClient($this->options['base_url'], $this->options);
         $this->client = $client;
@@ -58,20 +59,23 @@ class HttpClient implements HttpClientInterface {
                 $logger = null;
         }
 
-        if(!is_null($logger)){
-            $adapter = new MonologLogAdapter($logger);
-            $logPlugin = new LogPlugin($adapter, MessageFormatter::DEBUG_FORMAT);
-            $client->addSubscriber($logPlugin);
-        }
+        // @TODO: Changed it middleware
+        // if(!is_null($logger)){
+        //     $adapter = new MonologLogAdapter($logger);
+        //     $logPlugin = new LogPlugin($adapter, MessageFormatter::DEBUG_FORMAT);
+        //     $client->addSubscriber($logPlugin);
+        // }
 
-        $this->addListener('request.error', array(new ErrorListener($this->options), 'onRequestError'));
+        // @TODO: Change to middleware
+        // $this->addListener('request.error', array(new ErrorListener($this->options), 'onRequestError'));
         $this->clearHeaders();
     }
 
     /**
      * @return Request
      */
-    public function getLastRequest() {
+    public function getLastRequest()
+    {
         return $this->lastRequest;
     }
 
@@ -112,7 +116,8 @@ class HttpClient implements HttpClientInterface {
     /**
      * {@inheritDoc}
      */
-    public function get($path, array $parameters = array(), array $headers = array()) {
+    public function get($path, array $parameters = array(), array $headers = array())
+    {
         return $this->request($path, null, 'GET', $headers, array('query' => $parameters));
     }
 

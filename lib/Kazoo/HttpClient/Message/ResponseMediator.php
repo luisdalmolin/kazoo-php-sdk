@@ -2,13 +2,14 @@
 
 namespace Kazoo\HttpClient\Message;
 
-use Guzzle\Http\Message\Response;
+use GuzzleHttp\Psr7\Response;
 use Kazoo\Exception\ApiLimitExceedException;
 
-class ResponseMediator {
-
-    public static function getContent(Response $response, $json_force_object = false) {
-        $body = $response->getBody(true);
+class ResponseMediator
+{
+    public static function getContent(Response $response, $json_force_object = false)
+    {
+        $body = $response->getBody()->getContents();
         $content = json_decode($body, $json_force_object);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
@@ -18,8 +19,9 @@ class ResponseMediator {
         return $content;
     }
 
-    public static function getPagination(Response $response) {
-        $header = $response->getHeader('Link');
+    public static function getPagination(Response $response)
+    {
+        $header = $response->getHeaderLine('Link');
 
         if (empty($header)) {
             return null;

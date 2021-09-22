@@ -4,8 +4,6 @@ namespace Kazoo\HttpClient\Listener;
 
 use Kazoo\HttpClient\Message\ResponseMediator;
 use Guzzle\Common\Event;
-use Guzzle\Http\Message\Response;
-
 use Kazoo\Exception\ApiLimitExceedException;
 use Kazoo\Exception\ErrorException;
 use Kazoo\Exception\RuntimeException;
@@ -35,7 +33,7 @@ class ErrorListener
      */
     public function onRequestError(Event $event)
     {
-        /** @var $request \Guzzle\Http\Message\Request */
+        /** @var \GuzzleHttp\Psr7\Request */
         $request = $event['request'];
         $response = $request->getResponse();
 

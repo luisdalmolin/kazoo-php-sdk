@@ -4,9 +4,10 @@ namespace Kazoo\AuthToken;
 
 use stdClass;
 use Guzzle\Common\Event;
-use Kazoo\Exception\AuthenticationException;
 use Kazoo\HttpClient\HttpClient;
+use Psr\Http\Message\RequestInterface;
 use Kazoo\HttpClient\HttpClientInterface;
+use Kazoo\Exception\AuthenticationException;
 use Kazoo\HttpClient\Message\ResponseMediator;
 
 /**
@@ -96,22 +97,6 @@ class User implements AuthTokenInterface {
      */
     public function setClient(\Kazoo\Client $client) {
         $this->client = $client;
-        $this->client->getHttpClient()->addListener('request.before_send', array(
-            $this, 'onRequestBeforeSend'
-        ));
-    }
-
-    /**
-     *
-     *
-     * @param \Guzzle\Common\Event;
-     */
-    public function onRequestBeforeSend(Event $event) {
-        if ($this->disabled) {
-            return;
-        }
-        $token = $this->getToken();
-        $event['request']->setHeader('X-Auth-Token', $token);
     }
 
     /**
@@ -150,7 +135,7 @@ class User implements AuthTokenInterface {
     }
 
     private function checkSessionResponse() {
-        if (!empty($_SESSION['Kazoo']['AuthToken']['User'][$this->username])) {
+        if (isset($_SESSION['Kazoo']['AuthToken']['User'][$this->username])) {
             $this->auth_response = $_SESSION['Kazoo']['AuthToken']['User'][$this->username];
         } else {
             $this->requestToken();
@@ -178,5 +163,10 @@ class User implements AuthTokenInterface {
             $message = $response->getStatusCode() . " " . $response->getReasonPhrase() . " " . $response->getProtocol() . $response->getProtocolVersion();
             throw new AuthenticationException($message);
         }
+    }
+
+    public function isDisabled()
+    {
+        return $this->disabled;
     }
 }

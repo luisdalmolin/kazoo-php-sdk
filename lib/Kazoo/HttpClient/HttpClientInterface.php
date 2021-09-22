@@ -2,6 +2,7 @@
 
 namespace Kazoo\HttpClient;
 
+use GuzzleHttp\Psr7\Response;
 use Kazoo\Exception\InvalidArgumentException;
 
 /**
@@ -17,7 +18,7 @@ interface HttpClientInterface
      * @param array  $parameters GET Parameters
      * @param array  $headers    Reconfigure the request headers for this call only
      *
-     * @return array Data
+     * @return Response
      */
     public function get($path, array $parameters = array(), array $headers = array());
 
@@ -28,7 +29,7 @@ interface HttpClientInterface
      * @param mixed  $body       Request body
      * @param array  $headers    Reconfigure the request headers for this call only
      *
-     * @return array Data
+     * @return Response
      */
     public function post($path, $body = null, array $headers = array());
 
@@ -40,7 +41,7 @@ interface HttpClientInterface
      * @param array  $headers    Reconfigure the request headers for this call only
      *
      * @internal param array $parameters Request body
-     * @return array Data
+     * @return Response
      */
     public function patch($path, $body = null, array $headers = array());
 
@@ -51,7 +52,7 @@ interface HttpClientInterface
      * @param mixed  $body       Request body
      * @param array  $headers    Reconfigure the request headers for this call only
      *
-     * @return array Data
+     * @return Response
      */
     public function put($path, $body, array $headers = array());
 
@@ -62,7 +63,7 @@ interface HttpClientInterface
      * @param mixed  $body       Request body
      * @param array  $headers    Reconfigure the request headers for this call only
      *
-     * @return array Data
+     * @return Response
      */
     public function delete($path, $body = null, array $headers = array());
 
@@ -75,7 +76,7 @@ interface HttpClientInterface
      * @param string $httpMethod HTTP method to use
      * @param array  $headers    Request headers
      *
-     * @return array Data
+     * @return Response
      */
     public function request($path, $body, $httpMethod = 'GET', array $headers = array());
 

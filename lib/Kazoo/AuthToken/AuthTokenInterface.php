@@ -39,4 +39,9 @@ interface AuthTokenInterface
      *
      */
     public function reset();
+
+    /**
+     * @return bool
+     */
+    public function isDisabled();
 }
