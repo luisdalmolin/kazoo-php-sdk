@@ -2,19 +2,16 @@
 
 namespace Kazoo\HttpClient;
 
-use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\ClientInterface;
+use Monolog\Logger;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-
-use Guzzle\Log\MonologLogAdapter;
-use Monolog\Logger;
-use Guzzle\Plugin\Log\LogPlugin;
-use Guzzle\Log\MessageFormatter;
-
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\MessageFormatter;
 use Kazoo\Exception\ErrorException;
 use Kazoo\Exception\RuntimeException;
-use Kazoo\HttpClient\Listener\ErrorListener;
+use GuzzleHttp\Client as GuzzleClient;
+use Kazoo\HttpClient\Middleware\ErrorMiddleware;
 
 /**
  * Performs requests on Kazoo API.
@@ -42,32 +39,19 @@ class HttpClient implements HttpClientInterface {
     public function __construct(array $options = array(), ClientInterface $client = null)
     {
         $this->options = array_merge($this->options, $options);
-        $client = $client ? : new GuzzleClient($this->options['base_url'], $this->options);
-        $this->client = $client;
+        $this->options['handler']->push(new ErrorMiddleware($options));
 
-        $logger = null;
-        switch($this->options['log_type']){
-            case "file":
-                $logger = new Logger('sdk_logger');
-                $logger->pushHandler(new \Monolog\Handler\StreamHandler($this->options['log_file'], LOGGER::DEBUG));
-                break;
-            case "stdout":
-                $logger = new Logger('sdk_logger');
-                $logger->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout', LOGGER::DEBUG));
-                break;
-            default:
-                $logger = null;
+        $logger = $this->getLogger();
+
+        if (! is_null($logger)){
+            $this->options['handler']->push(
+                Middleware::log($logger, MessageFormatter::DEBUG)
+            );
         }
 
-        // @TODO: Changed it middleware
-        // if(!is_null($logger)){
-        //     $adapter = new MonologLogAdapter($logger);
-        //     $logPlugin = new LogPlugin($adapter, MessageFormatter::DEBUG_FORMAT);
-        //     $client->addSubscriber($logPlugin);
-        // }
+        $client = $client ? : new GuzzleClient($this->options);
+        $this->client = $client;
 
-        // @TODO: Change to middleware
-        // $this->addListener('request.error', array(new ErrorListener($this->options), 'onRequestError'));
         $this->clearHeaders();
     }
 
@@ -109,10 +93,6 @@ class HttpClient implements HttpClientInterface {
         );
     }
 
-    public function addListener($eventName, $listener) {
-        $this->client->getEventDispatcher()->addListener($eventName, $listener);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -152,25 +132,53 @@ class HttpClient implements HttpClientInterface {
     /**
      * {@inheritDoc}
      */
-    public function request($path, $body = null, $httpMethod = 'GET', array $headers = array(), array $options = array()) {
-        $request = $this->createRequest($httpMethod, $path, $body, $headers, $options);
-
+    public function request($path, $body = null, $httpMethod = 'GET', array $headers = array(), array $options = array())
+    {
         try {
-            $response = $this->client->send($request);
+            $merged_headers = array_merge($this->headers, $headers);
+            $response = $this->client->request($httpMethod, $path, array_merge(array_filter([
+                'headers' => $merged_headers,
+                'body' => is_string($body) ? $body : null,
+                'json' => is_array($body) ? $body : null,
+                'http_errors' => false,
+            ]), $options));
         } catch (\LogicException $e) {
             throw new ErrorException($e->getMessage());
         } catch (\RuntimeException $e) {
             throw new RuntimeException($e->getMessage());
         }
 
-        $this->lastRequest = $request;
         $this->lastResponse = $response;
 
         return $response;
     }
 
-    protected function createRequest($httpMethod, $path, $body = null, array $headers = array(), array $options = array()) {
+    protected function createRequest($httpMethod, $path, $body = null, array $headers = array(), array $options = array())
+    {
         $merged_headers = array_merge($this->headers, $headers);
         return $this->client->createRequest($httpMethod, $path, $merged_headers, $body, $options);
+    }
+
+    /**
+     * @return Logger|null
+     */
+    protected function getLogger()
+    {
+        $logger = null;
+
+        switch ($this->options['log_type']){
+            case "file":
+                $logger = new Logger('sdk_logger');
+                $logger->pushHandler(new \Monolog\Handler\StreamHandler($this->options['log_file'], LOGGER::DEBUG));
+                break;
+            case "stdout":
+                $logger = new Logger('sdk_logger');
+                $logger->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout', LOGGER::DEBUG));
+                break;
+            default:
+                $logger = null;
+        }
+
+        return $logger;
     }
 }

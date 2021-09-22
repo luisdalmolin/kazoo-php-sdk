@@ -150,18 +150,19 @@ class User implements AuthTokenInterface {
 
         $this->disabled = true;
         $tokenizedUri = $this->client->getTokenizedUri("/user_auth");
-        $response = ResponseMediator::getContent($this->client->getHttpClient()->put($tokenizedUri, json_encode($payload)));
+        $response = $this->client->getHttpClient()->put($tokenizedUri, json_encode($payload));
+        $content = ResponseMediator::getContent($response);
         $this->disabled = false;
 
-        switch ($response->status) {
-        case "success":
-            $this->auth_response = $response->data;
-            $_SESSION['Kazoo']['AuthToken']['User'][$this->username] = $this->auth_response;
-            $this->auth_response->auth_token = $response->auth_token;
-            break;
-        default:
-            $message = $response->getStatusCode() . " " . $response->getReasonPhrase() . " " . $response->getProtocol() . $response->getProtocolVersion();
-            throw new AuthenticationException($message);
+        switch ($content->status) {
+            case "success":
+                $this->auth_response = $content->data;
+                $_SESSION['Kazoo']['AuthToken']['User'][$this->username] = $this->auth_response;
+                $this->auth_response->auth_token = $content->auth_token;
+                break;
+            default:
+                $message = $response->getStatusCode() . " " . $response->getReasonPhrase() . " " . $response->getProtocolVersion();
+                throw new AuthenticationException($message);
         }
     }
 
